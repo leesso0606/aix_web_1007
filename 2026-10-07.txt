@@ -1,0 +1,169 @@
+2026-10-07
+
+1.web 파일에서 터미널 창 키기
+pip install --upgrade pip
+pip install Django 설치
+
+2.p1007폴더 생성
+터미널 창에 cd p1007
+->django-admin startproject spjt01
+->cd spjt01
+->C:\workspace\web\aix_web_1007\p1007\spjt01 복사
+
+3.윈도우+r->cmd창 생성
+
+cd 복사한 것 붙이기
+->python manage.py runserver
+->별 이상 없으면 Starting WSGI development server at http://127.0.0.1:8000/ 가 있을 것.
+
+4. http://127.0.0.1:8000/
+를 크롬창 url에 입력하면 됨.
+
+5. 서버종료
+ctrl +c
+
+6. app생성
+python manage.py startapp students
+
+7. 프로그램 다시 시작
+C:\workspace\web\aix_web_1007\p1007\spjt01 (cmd창 끄고 나서 작성)
+->python manage.py runserver(cmd창에서 저것만)
+
+8. app세팅
+spjt01폴더-> settings.py 에 INSTALLED_APPS 찾기
+거기에 생성한 app명 작성. 저장
+
+#-----------------------------------------------------
+spjt02로 다시 해봄
+
+1. spjt02폴더 안 urls.py->
+
+from django.contrib import admin
+from django.urls import path,include
+# from django.urls import include 하거나 위에 include 를 붙이거나
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('students/', include('students.urls')), #students app안에 url를 찾아감
+]
+
+
+2. students폴더 안에
+urls.py 파일 만들기
+위 부분 복사하고 붙여넣기
+
+from django.urls import path,include
+# from django.urls import include 하거나 위에 include 를 붙이거나
+from . import views #자기 폴더 안 views를 가져와라
+
+app_name='students'
+
+urlpatterns = [
+    path('s_write/', views.s_write, name='s_write'), #students app안에 url를 찾아감
+]
+로 변경
+
+
+3. views.py 파일에
+
+def swrite(request):
+    return render(request, 's_write.html')
+
+s_write 든 swrite 든 urls, views 파일에 적는 이름 통일하기
+
+4. http://127.0.0.1:8000/ 를 다시 치면 안나옴 404코드 됨
+http://127.0.0.1:8000/students/swrite/를 치면 나옴
+
+#---------------------------------------------------------------
+선생님이 하신것
+
+[ 1. 디렉토리 이동 ]
+cd p1007 폴더이동
+
+[ 2. 프로젝트 생성 ]
+django-admin startproject spjt04
+
+[ 3. 디렉토리 이동 ]
+cd spjt04
+
+[ 4. app생성 ]
+python manage.py startapp students
+
+[ 5. cmd창 생성 ]
+win+r > cmd 입력후 엔터키
+
+[ 6. cmd창에서 디렉토리 위치 이동 ]
+cd C:\workspace\web\aix_web_1007\p1007\spjt04
+
+[ 7. 서버구동 ]
+python manage.py runserver
+
+[ 8. 서버접속 ]
+http://127.0.0.1:8000/
+
+[ 9. sjpt04> setting.py ]
+INSTALLED_APPS = [
+'students',
+]
+
+[ 10. sjpt04> urls.py ]
+from django.urls import path,include
+urlpatterns = [
+path('admin/', admin.site.urls),
+path('students/', include('students.urls')),
+]
+
+[ 11. students > urls.py 생성 ]
+from django.urls import path,include
+from . import views
+
+app_name='students'
+urlpatterns = [
+    path('swrite/', views.swrite, name='swrite'),
+]
+
+[ 12. students > views.py ]
+def swrite(request):
+    return render(request,'swrite.html')
+
+[ 13. students > templates폴더 생성 ]
+폴더에 swrite.html 파일 생성
+body에 h1으로 학생성적 프로그램이라고 치고 저장
+
+[ 서버종료 ]
+ctrl + c : 종료됨
+
+[url에 입력하면 만든 html 사이트가 뜸]
+http://127.0.0.1:8000/students/swrite/
+
+[14. main 화면 만들기]
+만드려는 프로젝트 예로)spjt05 로 이동 후
+python manage.py startapp home
+
+그 다음 똑같이 세팅에 추가 등 진행
+
+
+#----------------------------------------------------------------------
+
+html할 때 !해도 자동이 안불러질 경우
+
+1. ctrl + , 
+->검색창에 setting
+->Edit in settings.json
+-> 맨 마지막에 "emmet.includeLanguages": { "django-html": "html" }, 붙이기
+
+아래는 학원에서 했을 때 나온것
+
+{
+    "workbench.colorTheme": "Light Modern",
+    "workbench.startupEditor": "none",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "git.autofetch": true,
+    "diffEditor.hideUnchangedRegions.enabled": true,
+    "workbench.settings.applyToAllProfiles": [
+
+    ],
+    "emmet.includeLanguages": { "django-html": "html" },
+}
+
+저장하고 끄기 -> 다시 vs코드 실행해서 잘 되는지 확인
