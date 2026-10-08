@@ -81,13 +81,14 @@ http://127.0.0.1:8000/students/swrite/를 치면 나옴
 cd p1007 폴더이동
 
 [ 2. 프로젝트 생성 ]
-django-admin startproject spjt04
+django-admin startproject spro01
 
 [ 3. 디렉토리 이동 ]
-cd spjt04
+cd spro01
 
 [ 4. app생성 ]
 python manage.py startapp students
+python manage.py startapp home
 
 [ 5. cmd창 생성 ]
 win+r > cmd 입력후 엔터키
@@ -97,6 +98,11 @@ cd C:\workspace\web\aix_web_1007\p1007\spjt04
 
 [ 7. 서버구동 ]
 python manage.py runserver
+python -u manage.py runserver 0.0.0.0:8000
+ipconfig  : 자신의 ip를 볼수 있음.(공유기ip)
+192.168.0.58:8000
+127.0.0.1:8000
+localhost:8000
 
 [ 8. 서버접속 ]
 http://127.0.0.1:8000/
@@ -105,12 +111,16 @@ http://127.0.0.1:8000/
 INSTALLED_APPS = [
 'students',
 ]
+LANGUAGE_CODE = 'ko-kr'
+TIME_ZONE = 'Asia/Seoul'
+
 
 [ 10. sjpt04> urls.py ]
 from django.urls import path,include
 urlpatterns = [
 path('admin/', admin.site.urls),
 path('students/', include('students.urls')),
+path('', include('home.urls')),
 ]
 
 [ 11. students > urls.py 생성 ]
@@ -122,25 +132,169 @@ urlpatterns = [
     path('swrite/', views.swrite, name='swrite'),
 ]
 
+[ 11-2. home > urls.py 생성 ]
+from django.urls import path,include
+from . import views
+
+app_name=''
+urlpatterns = [
+
+    path('', views.index,name='index'),
+]
+
 [ 12. students > views.py ]
 def swrite(request):
     return render(request,'swrite.html')
 
-[ 13. students > templates폴더 생성 ]
-폴더에 swrite.html 파일 생성
-body에 h1으로 학생성적 프로그램이라고 치고 저장
+[ 12-2. home > views.py ]
+from django.shortcuts import render
+
+# 메인페이지
+def index(request):
+    return render(request,'index.html')
+
+
+[ 13. students > templates 폴더생성 ]
+swrite.html 파일 생성
+
+[ 13-2. home> templates 폴더생성 ]
+index.html 파일 생성
+
 
 [ 서버종료 ]
 ctrl + c : 종료됨
+[ 7. 서버구동 ]
+python manage.py runserver
+
+
+
+[14. db계정 생성 ]
+# 생성할 위치까지 가야함.
+C:\workspace\web\aix_web_1007\p1008\spro03
+
+# db생성할것이 있는지 확인
+python manage.py makemigrations
+# db생성
+python manage.py migrate
+
+[ 15. 관리자 계정 생성 ]
+python manage.py createsuperuser
+admin
+admin@naver.com
+1111
+#비번은 안보이는게 정상
+
+[16. 디장고 관리]-damin 확인
+http://127.0.0.1:8000/admin/
+
+
+
+
+[ 17. students폴더  models.py에 Stu 클래스 작성 ]
+from django.db import models
+
+class Stu(models.Model):
+    name = models.CharField(max_length=100)
+    major = models.CharField(max_length=100)
+    age = models.IntegerField(default=0)
+    grade = models.IntegerField(default=0)
+    gender = models.CharField(max_length=30)
+
+    def __str__(self):
+        return f'{self.name},{self.major},{self.age},{self.grade},{self.gender}'
+
+
+
+[ 18.students폴더 admin.py에 Stu 등록 ]
+from django.contrib import admin
+from students.models import Stu
+
+admin.site.register(Stu)
+
+[19. 만든 클래스 적용]
+# db생성할것이 있는지 확인
+python manage.py makemigrations
+# db생성
+python manage.py migrate
+
+->http://127.0.0.1:8000/admin/  검색하면  Stus 가 생김
+
+[ 20. shell 에서 학생등록 ]
+# 파이썬 프로그램을 실행
+python manage.py shell
+[ 저장 ]
+#stu를 못 찾는경우
+from students.models import Stu
+qs = Stu(name='홍길동',major='국문과',age=20,grade=1,gender='남자')
+qs.save()
+qs = Stu(name='유관순',major='영문과',age=22,grade=3,gender='여자')
+qs.save()
+qs = Stu(name='이순신',major='수학과',age=21,grade=2,gender='남자')
+qs.save()
+qs = Stu(name='강감찬',major='역사학과',age=24,grade=4,gender='남자')
+qs.save()
+
+Stu(name='홍길동',major='국문과',age=20,grade=1,gender='남자').save()
+
+[ 21.검색 ]
+Stu.objects.get(name='홍길동')   #1개
+Stu.objects.all()                         #여러개-리스트
+Stu.objects.filter(name='홍길동') #여러개-리스트
+Stu.objects.filter(name__contains='홍')
+Stu.objects.filter(name__startswith='홍')
+Stu.objects.filter(name__endswith='순')
+Stu.objects.filter(age__lt='23')
+Stu.objects.filter(age__lte='23')
+Stu.objects.filter(age__gt='23')
+Stu.objects.filter(age__gte='23')
+Stu.objects.filter(id__in=[1,2])
+
+[22. html페이지에서 정보 입력 후 db에 저장하기]
+swrite.html 만들기 : students폴더  models.py 값을 입력 할 수 있는 html
+->
+입력 값이 db로 저장되도록 students폴더 views.py 의 함수를 만들어라
+
+from django.shortcuts import render,redirect
+from students.models import Stu
+
+def swrite(request):
+    if request.method == 'GET':
+        print("GET 페이지가 로딩되었습니다.")
+        return render(request, 'swrite.html')
+    elif request.method =='POST':
+        print("POST 페이지가 로딩")
+        name = request.POST.get('name')
+        major = request.POST.get('major')
+        grade = request.POST.get('grade')
+        age = request.POST.get('age')
+        gender = request.POST.get('gender')
+        # qs = Stu(name='홍길동',major='국문학과',grade=1,age=20,gender='남자')
+        qs = Stu(name=name,major=major,grade=grade,age=age,gender=gender)
+        qs.save()
+
+        print(name,major,grade,age,gender)
+        return redirect('/')
+
+
+def slist(request):
+    return render(request, 'slist.html')
+
+#빠져나오기
+exit
+
+
+
+[ 폴더검색 위치 ]
+./  : 현재폴더에서 검색
+../ : 상위폴더에서 검색
+/   : root폴더에서 검색
 
 [url에 입력하면 만든 html 사이트가 뜸]
 http://127.0.0.1:8000/students/swrite/
 
-[14. main 화면 만들기]
-만드려는 프로젝트 예로)spjt05 로 이동 후
-python manage.py startapp home
 
-그 다음 똑같이 세팅에 추가 등 진행
+
+
 
 
 #----------------------------------------------------------------------
@@ -167,3 +321,23 @@ html할 때 !해도 자동이 안불러질 경우
 }
 
 저장하고 끄기 -> 다시 vs코드 실행해서 잘 되는지 확인
+
+2. 디장고 도움말 하는 법
+확장자 Django 설치
+f1->Preferences:Open User Setting(JSON)
+
+{
+    "workbench.colorTheme": "Light Modern",
+    "workbench.startupEditor": "none",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "git.autofetch": true,
+    "diffEditor.hideUnchangedRegions.enabled": true,
+    "workbench.settings.applyToAllProfiles": [
+
+    ],
+    "editor.fontLigatures":  false,
+    "auto-close-tag.activationOnLanguage": [
+    "*"],
+    "emmet.includeLanguages": { "django-html": "html" },
+}
+되도록 하기

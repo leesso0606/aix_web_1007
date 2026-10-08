@@ -1,0 +1,27 @@
+from django.shortcuts import render,redirect
+from students.models import Stu
+
+# Create your views here.
+# request → 브라우저에서 Django로 들어온 요청 정보
+# 사용자가 swrite 페이지에 들어오면 이 함수를 실행해라.
+# render()는 HTML 파일을 찾아서 브라우저에 보여주는 역할
+def swrite(request):
+    if request.method == 'GET':
+        print("GET 페이지가 로딩되었습니다.")
+        return render(request, 'swrite.html')
+    elif request.method =='POST':
+        print("POST 페이지가 로딩")
+        name = request.POST.get('name')
+        major = request.POST.get('major')
+        grade = request.POST.get('grade')
+        age = request.POST.get('age')
+        gender = request.POST.get('gender')
+        # qs = Stu(name='홍길동',major='국문학과',grade=1,age=20,gender='남자')
+        qs = Stu(name=name,major=major,grade=grade,age=age,gender=gender)
+        qs.save()
+
+        print(name,major,grade,age,gender)
+        return redirect('/')
+    
+def slist(request):
+    return render(request, 'slist.html')
