@@ -1,80 +1,5 @@
 2026-10-07
 
-1.web 파일에서 터미널 창 키기
-pip install --upgrade pip
-pip install Django 설치
-
-2.p1007폴더 생성
-터미널 창에 cd p1007
-->django-admin startproject spjt01
-->cd spjt01
-->C:\workspace\web\aix_web_1007\p1007\spjt01 복사
-
-3.윈도우+r->cmd창 생성
-
-cd 복사한 것 붙이기
-->python manage.py runserver
-->별 이상 없으면 Starting WSGI development server at http://127.0.0.1:8000/ 가 있을 것.
-
-4. http://127.0.0.1:8000/
-를 크롬창 url에 입력하면 됨.
-
-5. 서버종료
-ctrl +c
-
-6. app생성
-python manage.py startapp students
-
-7. 프로그램 다시 시작
-C:\workspace\web\aix_web_1007\p1007\spjt01 (cmd창 끄고 나서 작성)
-->python manage.py runserver(cmd창에서 저것만)
-
-8. app세팅
-spjt01폴더-> settings.py 에 INSTALLED_APPS 찾기
-거기에 생성한 app명 작성. 저장
-
-#-----------------------------------------------------
-spjt02로 다시 해봄
-
-1. spjt02폴더 안 urls.py->
-
-from django.contrib import admin
-from django.urls import path,include
-# from django.urls import include 하거나 위에 include 를 붙이거나
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('students/', include('students.urls')), #students app안에 url를 찾아감
-]
-
-
-2. students폴더 안에
-urls.py 파일 만들기
-위 부분 복사하고 붙여넣기
-
-from django.urls import path,include
-# from django.urls import include 하거나 위에 include 를 붙이거나
-from . import views #자기 폴더 안 views를 가져와라
-
-app_name='students'
-
-urlpatterns = [
-    path('s_write/', views.s_write, name='s_write'), #students app안에 url를 찾아감
-]
-로 변경
-
-
-3. views.py 파일에
-
-def swrite(request):
-    return render(request, 's_write.html')
-
-s_write 든 swrite 든 urls, views 파일에 적는 이름 통일하기
-
-4. http://127.0.0.1:8000/ 를 다시 치면 안나옴 404코드 됨
-http://127.0.0.1:8000/students/swrite/를 치면 나옴
-
-#---------------------------------------------------------------
 선생님이 하신것
 
 [ 1. 디렉토리 이동 ]
@@ -82,6 +7,7 @@ cd p1007 폴더이동
 
 [ 2. 프로젝트 생성 ]
 django-admin startproject spro01
+안된다면 python -m django-admin startproject spro01 식으로
 
 [ 3. 디렉토리 이동 ]
 cd spro01
@@ -279,6 +205,107 @@ def swrite(request):
 def slist(request):
     return render(request, 'slist.html')
 
+[23. home폴더의 index.html]
+각 html 페이지를 연결하기
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>메인 페이지</h1>
+    <ul>
+        <li><a href='/students/swrite/'>학생정보입력</a></li>
+        <li><a href='/students/slist/'>학생정보리스트</a></li>
+        <li><a href='/students/supdate/'>학생정보수정</a></li>
+        <li><a href='/admin/'>관리자</a></li>
+    </ul>
+</body>
+</html>
+
+[24. students 폴더의 slist.html 출력할 수 있는 표 만들기]
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,th,td{border:1px solid black; border-collapse:collapse;}
+        th,td{width:150px; height:40px;}
+    </style>
+</head>
+<body>
+    <h1>학생정보리스트</h1>
+    <table>
+        <tr>
+            <th>이름</th>
+            <th>학과</th>
+            <th>나이</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    <br>
+    <a href='/students/swrite/'><button>정보입력</button></a>
+    <a href='/'><button>홈으로</button></a>
+    <br>
+</body>
+</html>
+
+[25.students 폴더의 views.py 의 함수]
+함수를 이용하여 저장한 db를 가져오기
+
+def slist(request):
+    # db 에서 전체 리스트 가져오기
+    qs=Students.objects.all()
+    context={'list':qs}
+    return render(request, 'slist.html',context)
+
+[26. 가져온 데이터 출력하기]
+students폴더의 slist.html 표 부분 수정
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,th,td{border:1px solid black; border-collapse:collapse;}
+        th,td{width:150px; height:40px;}
+    </style>
+</head>
+<body>
+    
+    <h1>학생 정보 출력</h1>
+    <table>
+        <tr>
+            <th>이름</th>
+            <th>학과</th>
+            <th>나이</th>
+        </tr>
+        {%for s in list%} {# list에 들어 있는 데이터를 하나씩 꺼내 반복 #} 
+        {# {% %} : 반복문이나 조건문처럼 템플릿의 기능을 실행할 때 사용 #}
+        <tr>
+            <th>{{s.name}}</th> {# {{ }} : 변수에 들어 있는 값을 화면에 출력할 때 사용 #} 
+            <th>{{s.major}}</th> 
+            <th>{{s.age}}</th>
+        </tr>
+        {%endfor%} {# 반복문 종료 #}
+    </table>
+    <a href='/students/swrite/'><button type='button'>정보입력</button></a>
+    <a href='/'><button type='button'>홈으로</button></a>
+</body>
+</html>
+
 #빠져나오기
 exit
 
@@ -341,3 +368,18 @@ f1->Preferences:Open User Setting(JSON)
     "emmet.includeLanguages": { "django-html": "html" },
 }
 되도록 하기
+
+
+3. 파일 폴더 와 디장고 합하기
+https://sqlitebrowser.org/dl/
+사이트에 DB Browser for SQLite - PortableApp 다운
+설치 후 바탕화면에 고정
+프로젝트 폴더 안 db.sqlite3 파일  SQLite - PortableApp 화면에 드래그
+
+3-1. students 폴더의 models.py 에 class 만들기
+테이블에 students_students가 생길것.
+그 안에 클래스 변수가 다 있는지 확인
+파일->가져오기->csv파일 가져오기 ->변수가 있는 테이블 이름과 같은 이름으로 저장-> 모두 예-> 변경사항 저장하기
+
+3-2. 관리자 페이지의 
+studentss 에 들어가면 파일 수 만큼 있으면 성공

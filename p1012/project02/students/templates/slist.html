@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table,th,td{border:1px solid black; border-collapse:collapse;}
+        th,td{width:150px; height:40px;}
+    </style>
+</head>
+<body>
+    
+    <h1>학생 정보 출력</h1>
+    <table>
+        <tr>
+            <th>이름</th>
+            <th>학과</th>
+            <th>나이</th>
+        </tr>
+        {%for s in list%} {# list에 들어 있는 데이터를 하나씩 꺼내 반복 #} 
+        {# {% %} : 반복문이나 조건문처럼 템플릿의 기능을 실행할 때 사용 #}
+        <tr>
+            <th>
+                <a href='/students/sview/{{s.name}}'>{{s.name}}</a>
+            </th> {# {{ }} : 변수에 들어 있는 값을 화면에 출력할 때 사용 #} 
+            <th>{{s.major}}</th> 
+            <th>{{s.age}}</th>
+        </tr>
+        {%endfor%} {# 반복문 종료 #}
+    </table>
+    <a href='/students/swrite/'><button type='button'>정보입력</button></a>
+    <a href='/'><button type='button'>홈으로</button></a>
+</body>
+</html>
