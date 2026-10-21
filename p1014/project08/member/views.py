@@ -16,11 +16,11 @@ def login(request):
     if request.method=="GET":
         return render(request, 'login.html')
     elif request.method=="POST":
-        id=request.POST.get('id')
+        id=request.POST.get('id') #()안에 든것은 input의 name의 값
         pw=request.POST.get('pw')
         print(f'로그인 정보:{id},{pw}')
         try:
-            qs=Member.objects.get(id=id, pw=pw) #id='aaa', pq='1111' / 없으면 None
+            qs=Member.objects.get(id=id, pw=pw) #id='aaa', pq='1111' 둘다 일치해야함/ 없으면 None
             request.session['session_id']=qs.id #섹션저장
             request.session['session_nickname']=qs.nickname
             print('로그인이 되었습니다.')

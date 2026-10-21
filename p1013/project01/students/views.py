@@ -14,7 +14,7 @@ def sdelete(request, no):
 
 # 학생정보수정 페이지, 저장
 def supdate(request, no):
-    if request.method=="GET":
+    if request.method=="GET":  # 선택한 학생 정보를 가져와 수정 화면에 보여줌-> input의 value값
         qs=Students.objects.get(no=no)
         context={'stu':qs}
         return render(request, 'supdate.html', context)
@@ -36,7 +36,7 @@ def supdate(request, no):
         qs.gender=gender
         qs.hobby=hobby
         qs.save()
-        return redirect('students:slist') #app_name,name방식
+        return redirect('students:slist') #app_name,url name방식 -> URL 이름을 이용해 이동하기 
 
 
 
@@ -44,6 +44,7 @@ def supdate(request, no):
 
 
 # 학생 정보 상세보기 -1개
+# 함수의 매개변수이름과 url의 변수이름이 같아야함. 
 def sview(request,no):
     qs=Students.objects.get(no=no)
     context={'stu':qs}
@@ -55,13 +56,15 @@ def sview(request,no):
 # 학생 정보리스트
 def slist(request):
     # 딕셔너리 형태로 데이터를 전달함.
-    qs=Students.objects.all().order_by('-no') #데이터 전체 가져오기, 정렬(-역순정렬)
+    qs=Students.objects.all().order_by('-no') #학생 모델의 DB조회-> 모든 학생 데이터 가져오기, 학생 번호를 내림차순으로 정렬
     # qs=Students.objects.get(name='홍길동') #홍길동 데이터 가져오기:1개
+
     # __contains:포함,__endswith:끝나는 것
     # qs=Students.objects.filter(name__contains='s') #s가 포함된 데이터 가져오기
     # qs=Students.objects.filter(name__endswith='s') #s로 끝나는 데이터
-    # gt,gte,lt,lte
-    # qs=Students.objects.filter(grade__gte=3='s') #3학년 이상
+
+    # gt: 초과 ,gte: 이상 ,lt:미만 ,lte:이하
+    # qs=Students.objects.filter(grade__gte=3) #3학년 이상
 
     context={"list":qs}
     return render(request, 'slist.html',context)

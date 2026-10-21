@@ -47,6 +47,7 @@ index.html 파일에 <link rel='stylesheet' href='/static/css/style.css'>
 [ 프로그램 진행 ]
 1. app추가
 - member app 생성
+-python manage.py startapp member
 
 2. setting.py 추가
 
@@ -61,7 +62,7 @@ path('member/', include('member.urls')),
 6. templates 생성
 7. login.html 파일 가져오기
 
------------------------------------
+--------------
 [ db생성, 슈퍼관리자등록 ]
 1. migrate 생성 : python manage.py migrate
 2. createsuperuser 생성 : python manage.py createsuperuser
