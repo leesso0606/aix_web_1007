@@ -33,7 +33,7 @@ def chart(request):
 
 # ajax통신
 def chart_data(request):
-    search_word= request.POST.get()
+    search_word= request.POST.get('search_word','')
     qs = Screen.objects.filter(Q(crevenue__gte=1160000000)|Q(title__contains='가')).values()[:6]
     r_qs = list(qs)
     context = {'list':r_qs}
